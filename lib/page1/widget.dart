@@ -575,30 +575,31 @@ class RowDemo extends StatelessWidget {
     return const Scaffold(
       appBar: AppBarDemo(),
       body: SafeArea(
-          child: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.all(8),
-            child: Row(
-              children: [
-                ColumDemo(),
-                SizedBox(
-                  width: 12,
-                ),
-                ColumDemo(),
-                SizedBox(
-                  width: 12,
-                ),
-                ColumDemo(),
-                SizedBox(
-                  width: 12,
-                ),
-                ColumDemo(),
-              ],
+        child: Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.all(8),
+              child: Row(
+                children: [
+                  ColumDemo(),
+                  SizedBox(
+                    width: 12,
+                  ),
+                  ColumDemo(),
+                  SizedBox(
+                    width: 12,
+                  ),
+                  ColumDemo(),
+                  SizedBox(
+                    width: 12,
+                  ),
+                  ColumDemo(),
+                ],
+              ),
             ),
-          ),
-        ],
-      )),
+          ],
+        ),
+      ),
     );
   }
 }
