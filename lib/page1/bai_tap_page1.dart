@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 // AppBar
@@ -312,7 +313,7 @@ class PostFooter extends StatelessWidget {
         const SizedBox(
           width: 70,
         ),
-        buildImageCarause(),
+        if (post.images.length > 1) buildImageCarause(),
         Expanded(
             child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
@@ -567,9 +568,14 @@ class Comment {
 }
 
 // Home page
-class HomePage extends StatelessWidget {
-  HomePage({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
+  @override
+  State<StatefulWidget> createState() => HomePageState();
+}
+
+class HomePageState extends State<HomePage> {
   final List<StoryModel> listStory = [
     const StoryModel(name: 'Your Story', avatar: 'assets/images/avatar.png'),
     const StoryModel(
@@ -657,6 +663,162 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+// Main Page
+class MainPage extends StatefulWidget {
+  const MainPage({super.key});
+
+  @override
+  State<StatefulWidget> createState() => MainPageState();
+}
+
+class MainPageState extends State<MainPage> {
+  var selectedTabIndex = 0;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: buildAppBar(),
+      body: buildBody(),
+      bottomNavigationBar: Container(
+        decoration: const BoxDecoration(
+          border: Border(
+            top: BorderSide(
+              color: Color(0x1A000000),
+              width: 0.5,
+            ),
+          ),
+        ),
+        child: buildBttomNavigationBar(),
+      ),
+    );
+  }
+
+  PreferredSizeWidget buildAppBar() {
+    return AppBar(
+      toolbarHeight: 0,
+      elevation: 0,
+      backgroundColor: Colors.transparent,
+      systemOverlayStyle: SystemUiOverlayStyle.dark,
+    );
+  }
+
+  Widget buildBody() {
+    switch (selectedTabIndex) {
+      case 0:
+        return const HomePage();
+      case 1:
+        return const Center(
+          child: Text('Page Search'),
+        );
+      case 2:
+        return const Center(
+          child: Text('Page Image'),
+        );
+      case 3:
+        return const Center(
+          child: Text('Page Favorite'),
+        );
+      case 4:
+        return const Center(
+          child: Text('Page Profile'),
+        );
+      default:
+        return const SizedBox();
+    }
+  }
+
+  Widget buildBttomNavigationBar() {
+    return BottomNavigationBar(
+      elevation: 0,
+      type: BottomNavigationBarType.shifting,
+      currentIndex: selectedTabIndex,
+      backgroundColor: const Color(0xFFFAFAFA),
+      items: [
+        BottomNavigationBarItem(
+          icon: Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: SvgPicture.asset(
+              selectedTabIndex == 0
+                  ? 'assets/icons/selected_home_tab.svg'
+                  : 'assets/icons/home_tab.svg',
+              width: 24,
+              fit: BoxFit.fitWidth,
+            ),
+          ),
+          label: '',
+        ),
+        BottomNavigationBarItem(
+          icon: Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: SvgPicture.asset(
+              selectedTabIndex == 1
+                  ? 'assets/icons/selected_search_tab.svg'
+                  : 'assets/icons/search_tab.svg',
+              width: 24,
+              fit: BoxFit.fitWidth,
+            ),
+          ),
+          label: '',
+        ),
+        BottomNavigationBarItem(
+          icon: Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: SvgPicture.asset(
+              'assets/icons/new_tab.svg',
+              width: 24,
+              fit: BoxFit.fitWidth,
+            ),
+          ),
+          label: '',
+        ),
+        BottomNavigationBarItem(
+          icon: Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: SvgPicture.asset(
+              selectedTabIndex == 3
+                  ? 'assets/icons/selected_favorite_tab.svg'
+                  : 'assets/icons/favorite_tab.svg',
+              width: 24,
+              fit: BoxFit.fitWidth,
+            ),
+          ),
+          label: '',
+        ),
+        BottomNavigationBarItem(
+            icon: Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: selectedTabIndex == 4
+                        ? Colors.black
+                        : Colors.transparent,
+                    width: 1,
+                  ),
+                ),
+                width: 40,
+                height: 40,
+                padding: const EdgeInsets.all(3),
+                child: Center(
+                  child: Image.asset(
+                    'assets/images/avatar.png',
+                    width: 40,
+                    fit: BoxFit.fitWidth,
+                  ),
+                ),
+              ),
+            ),
+            label: ''),
+      ],
+      onTap: (index) {
+        setState(() {
+          selectedTabIndex = index;
+        });
+      },
     );
   }
 }

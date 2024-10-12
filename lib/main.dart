@@ -10,9 +10,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'Làm Quen Flutter',
-      home: HomePage(),
+      home: MainPage(),
       debugShowCheckedModeBanner: false,
     );
   }
