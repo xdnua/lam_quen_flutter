@@ -12,10 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Làm Quen Flutter',
-      home: Scaffold(
-        appBar: const AppBarDemo(),
-        body: ListStory(),
-      ),
+      home: HomePage(),
       debugShowCheckedModeBanner: false,
     );
   }

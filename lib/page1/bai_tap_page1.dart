@@ -69,7 +69,7 @@ class Story extends StatelessWidget {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             gradient: LinearGradient(
-              colors: story.live
+              colors: story.isLive
                   ? [
                       const Color(0xFFE20337),
                       const Color(0xFFC60188),
@@ -107,10 +107,10 @@ class Story extends StatelessWidget {
             ),
           ),
         ),
-        if (story.live)
+        if (story.isLive)
           Positioned(
             bottom: 0,
-            left: 25,
+            left: 26,
             child: Container(
               width: 28,
               height: 18,
@@ -146,48 +146,517 @@ class Story extends StatelessWidget {
   }
 }
 
-class StoryModel {
-  final int id;
-  final String avatar, name;
-  final bool live;
+// List Story
+class ListStory extends StatelessWidget {
+  const ListStory({super.key, required this.list});
 
-  StoryModel(this.id, this.name, this.avatar, this.live);
+  final List<StoryModel> list;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 120,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.all(8),
+        itemCount: list.length,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: Column(
+              children: [
+                Story(story: list[index]),
+                const SizedBox(
+                  height: 3,
+                ),
+                Text(
+                  list[index].name,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
 }
 
-class ListStory extends StatelessWidget {
-  ListStory({super.key});
+// Post Header
+class PostHeader extends StatelessWidget {
+  const PostHeader({super.key, required this.post});
 
-  final List<StoryModel> list = [
-    StoryModel(0, 'Your Story', 'assets/images/avatar.png', false),
-    StoryModel(1, 'karennne', 'assets/images/avatar1.png', true),
-    StoryModel(2, 'zackjohn', 'assets/images/avatar2.png', false),
-    StoryModel(3, 'kieron_d', 'assets/images/avatar3.png', false),
-    StoryModel(4, 'craig_', 'assets/images/avatar4.png', false),
-  ];
+  final PostModel post;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 54,
+      child: Row(
+        children: [
+          const SizedBox(
+            width: 10,
+          ),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(30),
+            child: Image.asset(
+              post.avatar,
+              width: 32,
+              height: 32,
+            ),
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text(
+                    post.name,
+                    style: const TextStyle(
+                      color: Color(0xFF262626),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 4,
+                  ),
+                  if (post.isOfficial)
+                    SvgPicture.asset('assets/icons/official.svg')
+                ],
+              ),
+              const SizedBox(
+                height: 1,
+              ),
+              Text(
+                post.address,
+                style: const TextStyle(color: Color(0xFF262626), fontSize: 11),
+              )
+            ],
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          const Spacer(),
+          SvgPicture.asset(
+            'assets/icons/more.svg',
+            width: 14,
+            fit: BoxFit.fitWidth,
+          ),
+          const SizedBox(
+            width: 8,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Post Footer
+class PostFooter extends StatelessWidget {
+  const PostFooter({super.key, required this.post, required this.indexImage});
+
+  final PostModel post;
+
+  final int indexImage;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          builAction(),
+          const SizedBox(
+            height: 7,
+          ),
+          buildReaction(),
+          const SizedBox(
+            height: 4,
+          ),
+          builDescription(),
+        ],
+      ),
+    );
+  }
+
+  Widget builAction() {
+    return Row(
+      children: [
+        SvgPicture.asset(
+          'assets/icons/like.svg',
+          width: 24,
+          fit: BoxFit.fitWidth,
+        ),
+        const SizedBox(
+          width: 24,
+        ),
+        SvgPicture.asset(
+          'assets/icons/comment.svg',
+          width: 22,
+          fit: BoxFit.fitWidth,
+        ),
+        const SizedBox(
+          width: 24,
+        ),
+        SvgPicture.asset(
+          'assets/icons/messenger.svg',
+          width: 23,
+          fit: BoxFit.fitWidth,
+        ),
+        const SizedBox(
+          width: 70,
+        ),
+        buildImageCarause(),
+        Expanded(
+            child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            SvgPicture.asset(
+              'assets/icons/save.svg',
+              width: 21,
+              fit: BoxFit.fitWidth,
+            ),
+          ],
+        )),
+      ],
+    );
+  }
+
+  Widget buildImageCarause() {
+    return SizedBox(
+      height: 6,
+      child: ListView.builder(
+        shrinkWrap: true,
+        scrollDirection: Axis.horizontal,
+        itemCount: post.images.length,
+        itemBuilder: (context, index) {
+          return Container(
+            margin: const EdgeInsets.symmetric(
+              horizontal: 2,
+            ),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: indexImage == index
+                  ? const Color(0xFF3897F0)
+                  : const Color(0xFF000000).withOpacity(0.15),
+            ),
+            width: 6,
+            height: 6,
+          );
+        },
+      ),
+    );
+  }
+
+  Widget buildReaction() {
+    return Row(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(30),
+          child: Image.asset(
+            post.like.avatar,
+            width: 17,
+            height: 17,
+          ),
+        ),
+        const SizedBox(width: 6.5),
+        RichText(
+          text: TextSpan(
+            style: const TextStyle(
+              fontSize: 13,
+              color: Color(0xFF262626),
+            ),
+            children: [
+              const TextSpan(text: 'Liked by '),
+              TextSpan(
+                text: post.like.name,
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+              const TextSpan(text: ' and '),
+              TextSpan(
+                text: '${post.totalLike} others',
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget builDescription() {
+    return RichText(
+      text: TextSpan(
+        style: const TextStyle(
+          fontSize: 13,
+          color: Color(0xFF262626),
+        ),
+        children: [
+          TextSpan(
+            text: post.name,
+            style: const TextStyle(fontWeight: FontWeight.w600),
+          ),
+          TextSpan(
+            text: post.comment,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Item Post
+class PostItem extends StatefulWidget {
+  const PostItem({super.key, required this.post});
+
+  final PostModel post;
+
+  @override
+  State<StatefulWidget> createState() => PostItemState();
+}
+
+class PostItemState extends State<PostItem> with TickerProviderStateMixin {
+  late PageController pageController;
+  late TabController tabController;
+  int curenPageIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    pageController = PageController();
+    tabController = TabController(
+      length: widget.post.images.length,
+      vsync: this,
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    pageController.dispose();
+    tabController.dispose();
+  }
+
+  void handelPageViewChanged(int index) {
+    tabController.index = index;
+    setState(() {
+      curenPageIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    return Container(
+      color: Colors.white,
+      width: screenWidth,
+      child: Column(
+        children: [
+          PostHeader(post: widget.post),
+          SizedBox(
+            width: screenWidth,
+            height: screenWidth,
+            child: PageView.builder(
+              itemBuilder: (context, index) {
+                return Image.asset(
+                  widget.post.images[index],
+                  fit: BoxFit.fitWidth,
+                );
+              },
+              itemCount: widget.post.images.length,
+              controller: pageController,
+              onPageChanged: handelPageViewChanged,
+            ),
+          ),
+          PostFooter(post: widget.post, indexImage: curenPageIndex),
+        ],
+      ),
+    );
+  }
+}
+
+// List Post
+class PostListView extends StatelessWidget {
+  const PostListView({super.key, required this.list});
+
+  final List<PostModel> list;
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.all(8),
       itemCount: list.length,
       itemBuilder: (context, index) {
-        return Padding(
-          padding: const EdgeInsets.only(right: 12),
-          child: Column(
-            children: [
-              Story(story: list[index]),
-              const SizedBox(
-                height: 3,
-              ),
-              Text(
-                list[index].name,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
+        return PostItem(
+          post: list[index],
         );
       },
+    );
+  }
+}
+
+// Model
+class StoryModel {
+  const StoryModel({
+    required this.name,
+    required this.avatar,
+    this.isLive = false,
+  });
+  final String name;
+
+  final String avatar;
+
+  final bool isLive;
+}
+
+class PostModel {
+  const PostModel({
+    required this.name,
+    required this.avatar,
+    required this.address,
+    required this.totalLike,
+    required this.like,
+    required this.comment,
+    required this.images,
+    this.isOfficial = false,
+  });
+
+  final String name;
+
+  final String avatar;
+
+  final String address;
+
+  final String comment;
+
+  final int totalLike;
+
+  final List<String> images;
+
+  final Like like;
+
+  final bool isOfficial;
+}
+
+class Like {
+  const Like({
+    required this.name,
+    required this.avatar,
+  });
+
+  final String name;
+
+  final String avatar;
+}
+
+class Comment {
+  const Comment({
+    required this.name,
+    required this.content,
+  });
+
+  final String name;
+
+  final String content;
+}
+
+// Home page
+class HomePage extends StatelessWidget {
+  HomePage({super.key});
+
+  final List<StoryModel> listStory = [
+    const StoryModel(name: 'Your Story', avatar: 'assets/images/avatar.png'),
+    const StoryModel(
+      name: 'karennne',
+      avatar: 'assets/images/avatar1.png',
+      isLive: true,
+    ),
+    const StoryModel(name: 'zackjohn', avatar: 'assets/images/avatar2.png'),
+    const StoryModel(name: 'kieron_d', avatar: 'assets/images/avatar3.png'),
+    const StoryModel(name: 'craig_love', avatar: 'assets/images/avatar4.png'),
+    const StoryModel(name: 'karennne', avatar: 'assets/images/avatar1.png'),
+    const StoryModel(name: 'zackjohn', avatar: 'assets/images/avatar2.png'),
+    const StoryModel(name: 'kieron_d', avatar: 'assets/images/avatar3.png'),
+    const StoryModel(name: 'craig_love', avatar: 'assets/images/avatar4.png'),
+  ];
+
+  final List<PostModel> listPosts = [
+    const PostModel(
+      name: 'joshua_l',
+      avatar: 'assets/images/avatar1.png',
+      address: 'Tokyo, Japan',
+      images: [
+        'assets/images/post.png',
+        'assets/images/post1.png',
+        'assets/images/post2.png',
+        'assets/images/post3.png',
+      ],
+      comment: 'The game in Japan was amazing and I want to share some photos',
+      totalLike: 44686,
+      like: Like(
+        name: 'craig_love',
+        avatar: 'assets/images/avatar4.png',
+      ),
+      isOfficial: true,
+    ),
+    const PostModel(
+      name: 'joshua_l',
+      avatar: 'assets/images/avatar2.png',
+      images: ['assets/images/post.png'],
+      address: 'Tokyo, Japan',
+      comment: 'The game in Japan was amazing and I want to share some photos',
+      totalLike: 44686,
+      like: Like(
+        name: 'craig_love',
+        avatar: 'assets/images/avatar4.png',
+      ),
+    ),
+    const PostModel(
+      name: 'joshua_l',
+      avatar: 'assets/images/avatar3.png',
+      images: ['assets/images/post.png'],
+      address: 'Tokyo, Japan',
+      comment: 'The game in Japan was amazing and I want to share some photos',
+      totalLike: 44686,
+      like: Like(
+        name: 'craig_love',
+        avatar: 'assets/images/avatar4.png',
+      ),
+    ),
+    const PostModel(
+      name: 'joshua_l',
+      avatar: 'assets/images/avatar4.png',
+      images: ['assets/images/post.png'],
+      address: 'Tokyo, Japan',
+      comment: 'The game in Japan was amazing and I want to share some photos',
+      totalLike: 44686,
+      like: Like(
+        name: 'craig_love',
+        avatar: 'assets/images/avatar4.png',
+      ),
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: const AppBarDemo(),
+      body: SafeArea(
+        child: Column(
+          children: [
+            ListStory(list: listStory),
+            Expanded(
+              child: PostListView(list: listPosts),
+            )
+          ],
+        ),
+      ),
     );
   }
 }
